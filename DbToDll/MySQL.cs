@@ -14,7 +14,7 @@ namespace DbToDll
 
         public static MySqlConnection GetConnexion()
         {
-            _ConnectionString = "Server=localhost; database=dbtest; password=; UID=root; sslmode=none;";
+            _ConnectionString = "Server=localhost; port=3308; database=fil_rouge; password=; UID=root; sslmode=none;";
 
             if (cnx == null)
             {
@@ -32,17 +32,19 @@ namespace DbToDll
             cnx = null;
         }
 
-        private string RequestReader()
+        private string RequestReader(string CmdReader)
         {
             MySqlCommand cmd = GetConnexion().CreateCommand();
-            cmd.CommandText = "SELECT * FROM `marque` WHERE 1";
-            //SELECT Mo.modele as 'MODELE FORD DISPONIBLE' FROM modele Mo, marque Ma WHERE Mo.IDMarque=Ma.IDMarque and Ma.Marque='Ford'
+            cmd.CommandText = CmdReader;
             MySqlDataReader reader = cmd.ExecuteReader();
+            string[] resultT = new string[50];
+            int i = 0;
             while (reader.Read())
             {
                 try
                 {
-                    result = reader.GetString(0);
+                    resultT[i] = reader.GetString(i);
+                    i++;
                 }
                 catch (Exception e)
                 {

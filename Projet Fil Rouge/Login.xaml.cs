@@ -1,4 +1,5 @@
 ﻿using DbToDll;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,25 +22,86 @@ namespace Projet_Fil_Rouge
     /// </summary>
     public partial class Login : Window
     {
-        HashSet<Client> h = new HashSet<Client>();
+        HashSet<Users> h = new HashSet<Users>();
+        int a = 2;
+        HashSet<string> roles = new HashSet<string>();
         System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer();
         Main main;
-
-        bool open = false;
-        string name;
-        string lname;
-        string school;
-        string mat;
-        int rh;
-        int admin;
         public Login()
         {
             InitializeComponent();
-            h.Add(new Client { ID = "root", PSW = "toor" , Nom = "DURAND", Prenom = "Martin", Ecole = "ECOLE ALSACIENNE", Mat = "1023", DD = "01/01/2000", DF = "01/03/2000", EC = 1, AG = 0, DL = 1, DE = 0, RH = 0, ADMIN = 1 });
-            h.Add(new Client { ID = "Lucien", PSW = "abc123", Nom = "MARTIN", Prenom = "Paul", Ecole = "AGENCE ADECCO", Mat = "0023", DD = "01/01/1990", DF = "01/03/2020", EC = 0, AG = 1, DL = 1, DE = 1, RH = 1, ADMIN = 0 });
             pgbar.Value = 0;
             timer.Tick += new EventHandler(dispatcherTimer_Tick);
             timer.Interval = TimeSpan.FromMilliseconds(1);
+        }
+
+        private void log_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+        private void Log_In()
+        {
+            MySqlCommand cmd = MySQL.GetConnexion().CreateCommand();
+            cmd.CommandText = "SELECT D.ID , D.username, D.password, S.statut FROM data D, statut S WHERE D.username=" + '"' + ID.Text + '"' + " and D.password =" +
+            '"' + PSW.Password + '"' + " and S.idstatut = D.idstatut";
+            //SELECT D.ID , D.username, D.password, S.statut FROM 'data' D, 'statut' S WHERE D.username="" and D.password ="" and S.idstatut = U.idstatut
+            //select 1 from data where exists (select * from data)
+            MySqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                try
+                {
+                    if (reader.GetString(3) == "admin")
+                    {
+                        h.Add(new Users { Role = reader.GetString(3), ID = reader.GetInt32(0) });
+                        timer.Start();
+                    }
+                    else if (reader.GetString(3) == "RH")
+                    {
+                        h.Add(new Users { Role = reader.GetString(3), ID = reader.GetInt32(0) });
+                        timer.Start();
+                    }
+                        
+                    else
+                    {
+                        h.Add(new Users { Role = reader.GetString(3), ID = reader.GetInt32(0) });
+                        timer.Start();
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Error ! \n" + e.Message);
+                }
+
+            }
+            reader.Close();
+        }
+
+        private void FirstLaunch()
+        {
+            MySqlCommand cmd = MySQL.GetConnexion().CreateCommand();
+            cmd.CommandText = "select * from data";
+            //select 1 from data where exists (select * from data)
+            MySqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows) { }
+            else
+            {
+                a = 0;
+            }
+
+            
+            reader.Close();
+            
+        }
+
+        private void AddFirstUser ()
+        {
+            AddUsers add = new AddUsers(roles);
+            add.ShowDialog();
+            if (add.DialogResult.HasValue && add.DialogResult.Value)
+                MessageBox.Show("User clicked OK");
+            else
+                MessageBox.Show("Vous n'avez pas enregistrer d'admin");
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
@@ -59,34 +121,27 @@ namespace Projet_Fil_Rouge
 
         private void LogIn_Click(object sender, RoutedEventArgs e)
         {
-            //timer.Start();
-            foreach (var item in h)
-            {
-                if (item.ID == ID.Text)
-                {
-                    if (item.PSW == PSW.Password)
-                    {
-                        name = item.Prenom;
-                        lname = item.Nom;
-                        school = item.Ecole;
-                        mat = item.Mat;
-                        rh = item.RH;
-                        admin = item.ADMIN;
-                        timer.Start();
-                        open = true;
-                    }
-
-                }
-                if (!open)
-                {
-                    SnackbarOne.IsActive = true;
-                }
-            }
+            Log_In();
         }
 
         private void ID_GotFocus(object sender, RoutedEventArgs e)
         {
-            SnackbarOne.IsActive = false;
+            
+        }
+
+        private void pgbar_Initialized(object sender, EventArgs e)
+        {
+            FirstLaunch();
+            if (a == 0)
+            {
+                roles.Add("admin");
+                AddFirstUser();
+            }
+        }
+
+        private void SnackbarMessage_ActionClick(object sender, RoutedEventArgs e)
+        {
+            SnackBar.IsActive = false;
         }
     }
 }

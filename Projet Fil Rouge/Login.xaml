@@ -16,6 +16,7 @@
         mc:Ignorable="d"
         Title="Login" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="120*"/>
             <ColumnDefinition Width="160*"/>
@@ -24,12 +25,14 @@
         <TextBox x:Name="ID" materialDesign:HintAssist.Hint="ID" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,100,0,261" Grid.Column="1" Padding="1,-1,1,1" GotFocus="ID_GotFocus" />
         <PasswordBox x:Name="PSW" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,180,0,181" Grid.Column="1" Padding="1" TextOptions.TextHintingMode="Animated" />
         <Button x:Name="LogIn" Content="Log In" Margin="80,300,80,61" Click="LogIn_Click" Height="Auto" TextOptions.TextFormattingMode="Display" Grid.Column="1"/>
-        <ProgressBar x:Name="pgbar" Height="10" Margin="0,401,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+        <ProgressBar x:Name="pgbar" Height="10" Margin="0,401,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Initialized="pgbar_Initialized"/>
         <!-- simplest form -->
         <materialDesign:Snackbar
-  Message="ID or password is wrong."
-  IsActive="False"
-  
-  x:Name="SnackbarOne" Grid.Column="1" Margin="16,0,16,5" />
+  HorizontalAlignment="Stretch"
+  x:Name="SnackBar" Grid.ColumnSpan="3">
+            <materialDesign:SnackbarMessage
+    Content=""
+    ActionContent="OK" ActionClick="SnackbarMessage_ActionClick" />
+        </materialDesign:Snackbar>
     </Grid>
 </Window>

@@ -13,15 +13,28 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="Collabo" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Collabo" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
     <Grid>
         <Grid>
-            <DataGrid x:Name="mydatagridview" 
+            <DataGrid x:Name="DataGrid" 
                       materialDesign:DataGridAssist.CellPadding="13 8 8 8"
                       CanUserSortColumns="True"
                       CanUserAddRows="False" 
                       materialDesign:DataGridAssist.ColumnHeaderPadding="8"
-                      HorizontalAlignment="Left" Margin="10,10,0,10" Width="774"/>
+                      HorizontalAlignment="Left" Margin="10,10,0,0" Width="774" Height="367" VerticalAlignment="Top" BeginningEdit="mydatagridview_BeginningEdit" SelectionChanged="DataGrid_SelectionChanged"/>
         </Grid>
+        <Button x:Name="save"
+    Style="{StaticResource MaterialDesignRaisedDarkButton}"
+    Width="118"
+    ToolTip="Resource name: MaterialDesignRaisedLightDarkButton" Margin="10,0,0,10" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="Button_Click">
+            Modifier
+        </Button>
+        <materialDesign:Snackbar
+  HorizontalAlignment="Stretch"
+  x:Name="Snackbar">
+            <materialDesign:SnackbarMessage
+    Content=""
+    ActionContent="OK" ActionClick="SnackbarMessage_ActionClick" />
+        </materialDesign:Snackbar>
     </Grid>
 </Window>

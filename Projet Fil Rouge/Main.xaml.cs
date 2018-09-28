@@ -1,5 +1,6 @@
 ﻿using DbToDll;
 using MaterialDesignThemes.Wpf;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,28 +22,66 @@ namespace Projet_Fil_Rouge
     /// </summary>
     public partial class Main : Window
     {
-        int c;
         Login _login;
         Collabo collabo;
-        private HashSet<Users> users = new HashSet<Users>();
-        HashSet<Client> clients;
-        string[] nom;
-        string[] prenom;
+        private List<Users> users = new List<Users>();
         bool x = true;
+        string role;
+        HashSet<string> right = new HashSet<string>();
+        int matricule;
 
-        public Main(Login login, HashSet<Client> hashset)
+
+        public Main(Login login, HashSet<Users> hashset)
         {
             InitializeComponent();
             _login = login;
-            c = hashset.Count;
-            clients = hashset;
-            nom = new string[c];
-            prenom = new string[c];
             foreach (var item in hashset)
             {
-                users.Add(new Users { Nom = item.Nom, Prenom = item.Prenom , ADMIN = item.ADMIN, AG = item.AG, DD = item.DD, DE = item.DE, DF = item.DF, DL = item.DL, EC = item.EC, Ecole = item.Ecole, Mat = item.Mat, RH = item.RH });
+                role = item.Role;
+                matricule = item.ID;
             }
-            //mydatagridview.ItemsSource = users;
+            if(role == "admin")
+            {
+                right.Add("admin");
+                right.Add("RH");
+                right.Add("user");
+            }else if (role == "RH")
+            {
+                right.Add("user");
+            }
+            else
+            {
+                right.Add("nada");
+            }
+        }
+        private void UpdateData()
+        {
+            MySqlCommand cmd = MySQL.GetConnexion().CreateCommand();
+            cmd.CommandText = "Select D.id, D.name, D.lastname, D.school, D.dd, D.df, S.statut  from data D, statut S where D.idstatut = S.idstatut";
+            //SELECT U.ID , U.username, U.password, S.statut FROM user U, statut S WHERE U.username="" and U.password ="" and S.idstatut = U.idstatut
+            MySqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                try
+                {
+                    users.Add(new Users
+                    {
+                        ID = reader.GetInt32(0),
+                        Nom = reader.GetString(2),
+                        Prenom = reader.GetString(1),
+                        Ecole = reader.GetString(3),
+                        Role = reader.GetString(6),
+                        DD = reader.GetString(4),
+                        DF = reader.GetString(5)
+                    });
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Error ! \n" + e.Message);
+                }
+
+            }
+            reader.Close();
         }
 
         private void Main1_Closed(object sender, EventArgs e)
@@ -76,14 +115,20 @@ namespace Projet_Fil_Rouge
 
         private void List_Collab_Click(object sender, RoutedEventArgs e)
         {
-            collabo = new Collabo(users);
+            users.Clear();
+            UpdateData();
+            collabo = new Collabo(role, right);
+            collabo.DataGrid.ItemsSource = users;
             collabo.Show();
         }
 
         private void Add_Users_Click(object sender, RoutedEventArgs e)
         {
-            AddUsers addUsers = new AddUsers(clients);
-            addUsers.Show();
+            if(right.First() != "nada")
+            {
+                AddUsers addUsers = new AddUsers(right);
+                addUsers.ShowDialog();
+            }
         }
     }
 }

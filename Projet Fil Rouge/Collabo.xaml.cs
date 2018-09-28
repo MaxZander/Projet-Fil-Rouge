@@ -1,4 +1,5 @@
 ﻿using DbToDll;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,58 @@ namespace Projet_Fil_Rouge
     /// </summary>
     public partial class Collabo : Window
     {
-        private HashSet<Users> users;
-        public Collabo(HashSet<Users> hashset)
+        string roles;
+        string ID;
+        int id;
+        HashSet<string> vs = new HashSet<string>();
+        public Collabo(string role, HashSet<string> vs)
         {
             InitializeComponent();
-            users = hashset;
-            mydatagridview.ItemsSource = users;
+            roles = role;
+            this.vs = vs;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (roles == "user" || roles == "RH")
+            {
+                Snackbar.Message.Content = "Vous n'avez pas le permission de faire ceci";
+                Snackbar.IsActive = true;
+            }
+            else
+            {
+                UpdateUsers update = new UpdateUsers(vs, id);
+                update.Show();
+            }
+        }
+
+        private void mydatagridview_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if(roles == "user" || roles == "RH")
+            {
+                e.Cancel = true;
+            }
+        }
+        
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CurrentID();
+        }
+        private void CurrentID()
+        {
+            object item = DataGrid.SelectedItem;
+            ID = (DataGrid.SelectedCells[0].Column.GetCellContent(item) as TextBlock).Text;
+            id = Int32.Parse(ID);
+        }
+
+        private void SnackbarMessage_ActionClick(object sender, RoutedEventArgs e)
+        {
+            Snackbar.IsActive = false;
         }
     }
 }
