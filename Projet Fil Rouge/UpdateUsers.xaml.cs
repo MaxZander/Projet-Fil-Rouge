@@ -22,12 +22,14 @@ namespace Projet_Fil_Rouge
     public partial class UpdateUsers : Window
     {
         HashSet<string> roles;
-        public UpdateUsers(HashSet<string> vs, int id)
+        int idusrt;
+        public UpdateUsers(HashSet<string> vs, int idusr)
         {
             InitializeComponent();
             roles = vs;
             cbrole.ItemsSource = vs;
-            CurrentUser(id);
+            CurrentUser(idusr);
+            idusrt = idusr;
             //select * from data D where D.id = 1;
         }
         private string Datechanger(string DateEnEU)
@@ -38,9 +40,9 @@ namespace Projet_Fil_Rouge
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Update();
+            Update(idusrt);
         }
-        private void Update()
+        private void Update(int idusr)
         {
             var dd = Datechanger(DD.Text);
             var df = Datechanger(DF.Text);
@@ -64,7 +66,7 @@ namespace Projet_Fil_Rouge
                 idrole = 2;
             }
             MySqlCommand cmd = MySQL.GetConnexion().CreateCommand();
-            cmd.CommandText = "UPDATE data SET username =?Usr, password=?Psw,name=?Name,lastname=?LastName,school=?School,dd=?DD,df=?DF,bschool=?EC,bagence=?AG,idstatut=?IdStatut);";
+            cmd.CommandText = "UPDATE data SET username =?Usr, password=?Psw,name=?Name,lastname=?LastName,school=?School,dd=?DD,df=?DF,bschool=?EC,bagence=?AG,idstatut=?IdStatut where id =" + idusr;
             //"INSERT INTO data VALUES(0, ?Usr, ?Psw,?Name,?LastName,?School,?DD,?DF, 0, 0, 0);"
             cmd.Parameters.Add("?Usr", MySqlDbType.VarChar).Value = id.Text;
             cmd.Parameters.Add("?Psw", MySqlDbType.VarChar).Value = psw.Password;
