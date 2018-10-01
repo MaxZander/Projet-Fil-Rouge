@@ -24,12 +24,15 @@ namespace Projet_Fil_Rouge
         string roles;
         string ID;
         int id;
+        Main main;
         HashSet<string> vs = new HashSet<string>();
-        public Collabo(string role, HashSet<string> vs)
+        public Collabo(string role, HashSet<string> vs, Main main)
         {
             InitializeComponent();
             roles = role;
+            this.main = main;
             this.vs = vs;
+            DataGrid.ItemsSource = this.main.UpdateList(this);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -47,7 +50,17 @@ namespace Projet_Fil_Rouge
             else
             {
                 UpdateUsers update = new UpdateUsers(vs, id);
-                update.Show();
+                update.ShowDialog();
+                if (update.DialogResult.HasValue && update.DialogResult.Value)
+                {//OK
+                    DataGrid.ItemsSource = "";
+                    DataGrid.ItemsSource = main.UpdateList(this);
+                }
+                else
+                {//Cancel
+                    Snackbar.Message.Content = "Les modifs ne sont pas enregistrer.";
+                    Snackbar.IsActive = true;
+                }
             }
         }
 
@@ -66,13 +79,27 @@ namespace Projet_Fil_Rouge
         private void CurrentID()
         {
             object item = DataGrid.SelectedItem;
-            ID = (DataGrid.SelectedCells[0].Column.GetCellContent(item) as TextBlock).Text;
-            id = Int32.Parse(ID);
+            try
+            {
+                ID = (DataGrid.SelectedCells[0].Column.GetCellContent(item) as TextBlock).Text;
+                id = Int32.Parse(ID);
+            }
+            catch
+            {
+
+            }
+
         }
 
         private void SnackbarMessage_ActionClick(object sender, RoutedEventArgs e)
         {
             Snackbar.IsActive = false;
+        }
+
+        private void delete_Click(object sender, RoutedEventArgs e)
+        {
+            //
+            main.DeleteUser("delete from data where id ="+ id);
         }
     }
 }

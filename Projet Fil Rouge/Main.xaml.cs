@@ -115,11 +115,23 @@ namespace Projet_Fil_Rouge
 
         private void List_Collab_Click(object sender, RoutedEventArgs e)
         {
+            
+            collabo = new Collabo(role, right, this);
+            collabo.Show();
+        }
+
+        public List<Users> UpdateList(Collabo collabo)
+        {
             users.Clear();
             UpdateData();
-            collabo = new Collabo(role, right);
-            collabo.DataGrid.ItemsSource = users;
-            collabo.Show();
+            return users;
+        }
+
+        public void DeleteUser(string stringcmd)
+        {
+            MySqlCommand cmd = MySQL.GetConnexion().CreateCommand();
+            cmd.CommandText = stringcmd;
+            cmd.ExecuteNonQuery();
         }
 
         private void Add_Users_Click(object sender, RoutedEventArgs e)

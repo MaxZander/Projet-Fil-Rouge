@@ -36,5 +36,11 @@
     Content=""
     ActionContent="OK" ActionClick="SnackbarMessage_ActionClick" />
         </materialDesign:Snackbar>
+        <Button x:Name="delete"
+            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+            Width="118"
+            ToolTip="Resource name: MaterialDesignRaisedLightDarkButton" Margin="156,0,0,10" VerticalAlignment="Bottom"
+                HorizontalAlignment="Left" Content="Supprimer" Click="delete_Click" Cursor="Hand" IsDefault="True">
+        </Button>
     </Grid>
 </Window>

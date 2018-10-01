@@ -41,6 +41,8 @@ namespace Projet_Fil_Rouge
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Update(idusrt);
+            DialogResult = true;
+            this.Close();
         }
         private void Update(int idusr)
         {
@@ -123,13 +125,13 @@ namespace Projet_Fil_Rouge
                     id.Text = reader.GetString(1).ToString();
                     name.Text = reader.GetString(3);
                     lastname.Text = reader.GetString(4);
-
+                    psw.Password = reader.GetString(2);
                     if(reader.GetInt32(8) == 1)
                     {
                         school.Text = reader.GetString(5);
                         school_bool.IsChecked = true;
                     }
-                    //cbrole.SelectedItem = reader.GetString(10);
+                    cbrole.Text = reader.GetString(10);
                     DD.Text = reader.GetString(6);
                     DF.Text = reader.GetString(7);
                     if (reader.GetInt32(9) == 1)

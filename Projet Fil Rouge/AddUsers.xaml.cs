@@ -37,18 +37,6 @@ namespace Projet_Fil_Rouge
         {
             Add();
             DialogResult = true;
-                /*Mat = 0,
-                Nom = lastname.Text,
-                Prenom = name.Text,
-                Ecole = school.Text,
-                Role = role.SelectedValue.ToString(),
-                DD = datechanger(DD.Text),
-                DF = datechanger(DF.Text),
-                EC = 1,
-                AG = 0*/
-                // RESTE A FAIRE :
-                // Ajouter une requete SQL INSERT pour ajouter le nouvel utilisateur
-            
         }
 
         private void school_bool_Checked(object sender, RoutedEventArgs e)
